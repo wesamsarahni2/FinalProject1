@@ -1,7 +1,9 @@
 package com.example.finalproject;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -11,6 +13,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -70,14 +77,39 @@ public class LoginFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_login, container, false);
 
     }
+    private Button ForgotPass,SignIn;
     private EditText etEmail, etPassword;
     private Button btnSignUp;
+    private FirebaseAuth mAuth;
+
     public void onStart() {
 
         super.onStart();
+        SignIn=getView().findViewById(R.id.btnSignIn);
         btnSignUp=getView().findViewById(R.id.btnSignup);
         etEmail= getView().findViewById(R.id.etEmail);
         etPassword= getView().findViewById(R.id.etPassword);
+        mAuth = FirebaseAuth.getInstance();
+        SignIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                login();
+            }
+        });
+
+
+        ForgotPass=getView().findViewById(R.id.btnForgot);
+        ForgotPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getContext(), "You can reset your password now!", Toast.LENGTH_SHORT).show();
+
+                FragmentTransaction ft =getActivity().getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.ForgotPassLayout, new ForgotPassword());
+                ft.commit();
+            }
+        });
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
 
@@ -86,6 +118,7 @@ public class LoginFragment extends Fragment {
                 ft.commit();
 
             }
+
         });
     }
     private boolean IsPasswordValid(String password)
@@ -107,7 +140,7 @@ public class LoginFragment extends Fragment {
 
     }
 
-    public void login(View view) {
+    public void login() {
         String email, password;
         email = etEmail.getText().toString();
         password = etPassword.getText().toString();
@@ -128,7 +161,36 @@ public class LoginFragment extends Fragment {
                     , "Password is incorrect", Toast.LENGTH_SHORT).show();
             return;
         }
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(
+                        new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(
+                                    @NonNull Task<AuthResult> task)
+                            {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(getContext(),
+                                                    "Login successful!!",
+                                                    Toast.LENGTH_LONG)
+                                            .show();
+
+
+
+
+                                }
+
+                                else {
+
+                                    // sign-in failed
+                                    Toast.makeText(getContext(),
+                                                    "Login failed!!",
+                                                    Toast.LENGTH_LONG)
+                                            .show();
+
+
+                                }
     }
 
-
+                        });
 }
+    }

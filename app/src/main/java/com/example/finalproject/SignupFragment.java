@@ -1,7 +1,9 @@
 package com.example.finalproject;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -10,6 +12,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -69,12 +76,23 @@ public class SignupFragment extends Fragment {
     }
     private EditText email2,password2,confirmpassword2;
     private Button signup;
+    private FirebaseAuth mAuth;
     public void onStart(){
         super.onStart();
         signup=getView().findViewById(R.id.btnSignUp);
         email2= getView().findViewById(R.id.etEmail2);
         password2= getView().findViewById(R.id.etPassword2);
        confirmpassword2  = getView().findViewById(R.id.etPasswordConfirm);
+
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        signup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                signup();
+            }
+        });
+
 
     }
     private boolean ispasswordvalid(String password) {
@@ -94,7 +112,7 @@ public class SignupFragment extends Fragment {
         return matcher.matches();
     }
 
-    public void signup(View view) {
+    public void signup() {
         String email,password,confirmpassword;
         email = email2.getText().toString();
         password = password2.getText().toString();
@@ -122,6 +140,36 @@ public class SignupFragment extends Fragment {
             Toast.makeText(getContext()
                     , "the confirmed password Dosent match", Toast.LENGTH_SHORT).show();
         }
+
+        mAuth
+                .createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task)
+                    {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getContext(),
+                                            "Registration successful!",
+                                            Toast.LENGTH_LONG)
+                                    .show();
+
+
+
+
+                        }
+                        else {
+
+                            // Registration failed
+                            Toast.makeText(
+                                            getContext(),
+                                            "Registration failed!!"
+                                                    + " Please try again later",
+                                            Toast.LENGTH_LONG)
+                                    .show();
+
+
+                        }
 
     }
 }
