@@ -79,6 +79,7 @@ public class ForgotPassword extends Fragment {
         ResetPassword=getView().findViewById(R.id.btnResetPass);
 
         ResetPassword.setOnClickListener(new View.OnClickListener() {
+            // TODO: ask teacher abt changing actual login info via firebase
             @Override
             public void onClick(View view) {
                 Reset();
