@@ -2,6 +2,7 @@ package com.example.finalproject;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -12,8 +13,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,6 +22,8 @@ import java.util.regex.Pattern;
  * create an instance of this fragment.
  */
 public class ForgotPassword extends Fragment {
+    private FireBaseServices fbs;
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -69,22 +72,35 @@ public class ForgotPassword extends Fragment {
         return inflater.inflate(R.layout.fragment_forgot_password, container, false);
     }
     private Button ResetPassword;
-    private EditText NewPassword, NewPasswordConfirm;
+    private EditText ResetEmail;
 
     @Override
     public void onStart() {
+        fbs=FireBaseServices.getInstance();
         super.onStart();
-        NewPassword=getView().findViewById(R.id.etPasswordF);
-        NewPasswordConfirm=getView().findViewById(R.id.etPasswordF2);
+        ResetEmail=getView().findViewById(R.id.etEmailReset);
+
         ResetPassword=getView().findViewById(R.id.btnResetPass);
 
         ResetPassword.setOnClickListener(new View.OnClickListener() {
-            // TODO: ask teacher abt changing actual login info via firebase
+
             @Override
             public void onClick(View view) {
-                Reset();
+                fbs.getAuth().sendPasswordResetEmail(ResetEmail.getText().toString())
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()){
+                                            Toast.makeText(getActivity(), "Your Password reset Email has been sent", Toast.LENGTH_SHORT).show();
+                                        }
+                                        else {
+                                            Toast.makeText(getActivity(), "Failed, check the email you entered", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
 
-                Toast.makeText(getContext(), "Your Password has been reset", Toast.LENGTH_SHORT).show();
+
+
                 FragmentTransaction ft =getActivity().getSupportFragmentManager().beginTransaction();
                 ft.replace(R.id.LoginLayout, new LoginFragment());
                 ft.commit();
@@ -92,24 +108,6 @@ public class ForgotPassword extends Fragment {
         });
     }
 
-    public void Reset(){
 
-        String password,confirmpassword;
-        password = NewPassword.getText().toString();
-        confirmpassword= NewPasswordConfirm.getText().toString();
-        if(   password.trim().isEmpty()||  confirmpassword.trim().isEmpty())
-        {
-            Toast.makeText(getContext()
-                    , "some feilds are missing!", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if(!password.equals(confirmpassword))
-        {
-            Toast.makeText(getContext()
-                    , "the confirmed password Dosent match", Toast.LENGTH_SHORT).show();
-        }
-
-    }
 
 }

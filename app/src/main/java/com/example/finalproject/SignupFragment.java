@@ -91,6 +91,7 @@ public class SignupFragment extends Fragment {
             {
                 signup();
             }
+
         });
 
 
@@ -120,7 +121,7 @@ public class SignupFragment extends Fragment {
         if( email.trim().isEmpty()||  password.trim().isEmpty()||  confirmpassword.trim().isEmpty())
         {
             Toast.makeText(getContext()
-                    , "some feilds are missing!", Toast.LENGTH_SHORT).show();
+                    , "some fields are missing!", Toast.LENGTH_SHORT).show();
             return;
         }
         if(!isEmailvalid(email))
@@ -161,12 +162,7 @@ public class SignupFragment extends Fragment {
                         else {
 
                             // Registration failed
-                            Toast.makeText(
-                                            getContext(),
-                                            "Registration failed!!"
-                                                    + " Please try again later",
-                                            Toast.LENGTH_LONG)
-                                    .show();
+                            Toast.makeText(getContext(), "Registration failed!!" + " Please try again later", Toast.LENGTH_LONG).show();
 
 
                         }
