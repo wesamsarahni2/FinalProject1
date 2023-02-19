@@ -155,9 +155,6 @@ public class SignupFragment extends Fragment {
                                             Toast.LENGTH_LONG)
                                     .show();
 
-
-
-
                         }
                         else {
 
@@ -168,4 +165,4 @@ public class SignupFragment extends Fragment {
                         }
 
     }
-}
+});}}
